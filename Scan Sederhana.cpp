@@ -1,25 +1,43 @@
-#include <fstream>
 #include <iostream>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 
 using namespace std;
 
-bool isPunctuator(char ch)                  
+bool isPunctuator (char ch)                  
 {
-    if (ch == ' ' || ch == '+' || ch == '-' || ch == '*' ||
-        ch == '/' || ch == ',' || ch == ';' || ch == '>' ||
-        ch == '<' || ch == '=' || ch == '(' || ch == ')' ||
-        ch == '[' || ch == ']' || ch == '{' || ch == '}' ||
-        ch == '&' || ch == '|')
-        {
-            return true;
-        }
+    if (ch=='['||ch ==']'||ch=='{'||ch=='}'||
+        ch=='<'||ch =='='||ch=='('||ch==')'||
+        ch=='/'||ch ==','||ch==';'||ch=='>'||
+        ch==' '||ch =='+'||ch=='-'||ch=='*'||
+        ch=='&'||ch =='|')
+    {
+        return true;
+    }
     return false;
 }
-
-bool validIdentifier(char* str)                     
+char* subString (char* realStr, int l, int r)                
+{
+    int i;
+    char* str = ( char* ) malloc (sizeof (char) * (r - l + 2));
+    for (i = l; i <= r; i++)
+    {
+        str [i - l] = realStr[i];
+        str [r - l + 1] = '\0';
+    }
+    return str;
+}
+bool isOperator (char ch)                            
+{
+    if (ch=='+'||ch=='-'||ch=='*'||
+        ch=='/'||ch=='>'||ch=='<'||
+        ch=='='||ch=='|'||ch=='&')
+    {
+       return true;
+    }
+    return false;
+}
+bool validIdentifier (char* str)                     
 {
     if (str[0] == '0' || str[0] == '1' || str[0] == '2' ||
         str[0] == '3' || str[0] == '4' || str[0] == '5' ||
@@ -45,44 +63,6 @@ bool validIdentifier(char* str)
     }
     return true;
 }
-
-bool isOperator(char ch)                            
-{
-    if (ch == '+' || ch == '-' || ch == '*' ||
-        ch == '/' || ch == '>' || ch == '<' ||
-        ch == '=' || ch == '|' || ch == '&')
-    {
-       return true;
-    }
-    return false;
-}
-
-bool isKeyword(char *str)                       
-{
-    if (!strcmp(str, "if") || !strcmp(str, "else") ||
-        !strcmp(str, "while") || !strcmp(str, "do") ||
-        !strcmp(str, "break") ||  !strcmp(str, "continue")
-        || !strcmp(str, "int") || !strcmp(str, "double")
-        || !strcmp(str, "float") || !strcmp(str, "return")
-        || !strcmp(str, "char") || !strcmp(str, "case")
-        || !strcmp(str, "long") || !strcmp(str, "short")
-        || !strcmp(str, "typedef") || !strcmp(str, "switch")
-        || !strcmp(str, "unsigned") || !strcmp(str, "void")
-        || !strcmp(str, "static") || !strcmp(str, "struct")
-        || !strcmp(str, "sizeof") || !strcmp(str,"long")
-        || !strcmp(str, "volatile") || !strcmp(str, "typedef")
-        || !strcmp(str, "enum") || !strcmp(str, "const")
-        || !strcmp(str, "union") || !strcmp(str, "extern")
-        || !strcmp(str,"bool"))
-        {
-            return true;
-        }
-    else
-    {
-       return false;
-    }
-}
-
 bool isNumber(char* str)                            
 {
     int i, len = strlen(str),numOfDecimal = 0;
@@ -109,36 +89,22 @@ bool isNumber(char* str)
     }
     return true;
 }
-
-char* subString(char* realStr, int l, int r)                
+void parse (char* str)                       
 {
-    int i;
 
-    char* str = (char*) malloc(sizeof(char) * (r - l + 2));
-
-    for (i = l; i <= r; i++)
-    {
-        str[i - l] = realStr[i];
-        str[r - l + 1] = '\0';
-    }
-    return str;
-}
-
-void parse(char* str)                       
-{
-    int left = 0, right = 0;
     int len = strlen(str);
-    while (right <= len && left <= right) {
+    int left = 0, right = 0;
+    while (right <= len && left <= right) 
+	{
         if (isPunctuator(str[right]) == false)          
             {
                 right++;
             }
-
         if (isPunctuator(str[right]) == true && left == right)      
             {
             if (isOperator(str[right]) == true)
             {
-                std::cout<< str[right] <<" Adalah Operator\n";
+                cout << str [right] << " Adalah Operator\n";
             }
             right++;
             left = right;
@@ -147,34 +113,31 @@ void parse(char* str)
             {
             char* sub = subString(str, left, right - 1);   
 
-            if (isKeyword(sub) == true)
-                        {
-                            cout<< sub <<" Adalah Keyword\n";
-                        }
-            else if (isNumber(sub) == true)
-                        {
-                            cout<< sub <<" Adalah Angka\n";
-                        }
-            else if (validIdentifier(sub) == true
-                     && isPunctuator(str[right - 1]) == false)
-                     {
-                         cout<< sub <<" Adalah Identifier yang valid\n";
-                     }
+            if (isNumber(sub) == true)
+                    {
+                        cout << sub <<" Adalah Angka\n";
+                    } 
             else if (validIdentifier(sub) == false
                      && isPunctuator(str[right - 1]) == false)
-                     {
-                         cout<< sub <<" Bukan Identifier yang valid\n";
-                     }
-
+                    {
+                        cout << sub << " Identifier tidak valid\n";
+                    }
+            else if (validIdentifier(sub) == true
+                     && isPunctuator(str[right - 1]) == false)
+                    {
+                        cout << sub << " Identifier sudah valid\n";
+                    }     
             left = right;
             }
     }
     return;
 }
 
-int main()
+int main ()
 {
-    char c[100] = "int 1 + f = y7 7y";
-    parse(c);
+	cout << "\tLATIHAN TEKNIK KOMPILASI KELOMPOK 12\n\n\n";
+    char c [1000] = "int 1 + f = y7 7y";
+    parse (c);
+    
     return 0;
 }
