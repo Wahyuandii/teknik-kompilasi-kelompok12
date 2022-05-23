@@ -91,7 +91,6 @@ bool isNumber(char* str)
 }
 void parse (char* str)                       
 {
-
     int len = strlen(str);
     int left = 0, right = 0;
     while (right <= len && left <= right) 
@@ -132,7 +131,6 @@ void parse (char* str)
     }
     return;
 }
-
 int main ()
 {
 	cout << "\tLATIHAN TEKNIK KOMPILASI KELOMPOK 12\n\n\n";
